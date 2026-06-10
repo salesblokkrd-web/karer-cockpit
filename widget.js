@@ -25,9 +25,12 @@ w.backgroundGradient = g;
 w.setPadding(12, 14, 12, 12);
 
 if (!d){
-  const t = w.addText("Кокпит · нет данных");
+  const t = w.addText("Кокпит · нет связи");
   t.textColor = Color.white(); t.font = Font.mediumSystemFont(13);
-  Script.setWidget(w); w.presentMedium(); Script.complete();
+  Script.setWidget(w);
+  if (!config.runsInWidget) w.presentMedium();
+  Script.complete();
+  return;
 }
 
 // ── светофор ──
