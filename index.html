@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Кокпит · Карьер</title>
+<style>
+  :root{
+    --bg1:#0b1020; --bg2:#121a33; --card:rgba(255,255,255,.06);
+    --line:rgba(255,255,255,.12); --txt:#eaf0ff; --mut:#8da0c8;
+    --green:#27c281; --amber:#f5b53d; --red:#ef5b6b; --accent:#5b8cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;
+    color:var(--txt);
+    background:
+      radial-gradient(1200px 800px at 70% -10%, #1c2a52 0%, transparent 60%),
+      linear-gradient(160deg,var(--bg1),var(--bg2));
+    min-height:100%;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+  .top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .light{width:54px;height:54px;border-radius:50%;flex:none;position:relative}
+  .light::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 28px 4px currentColor;opacity:.55}
+  .light.g{background:var(--green);color:var(--green)}
+  .light.a{background:var(--amber);color:var(--amber)}
+  .light.r{background:var(--red);color:var(--red)}
+  .ttl{font-size:15px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+  .status{font-size:24px;font-weight:700;margin-top:2px}
+  .upd{font-size:12px;color:var(--mut);margin-left:auto;text-align:right;line-height:1.4}
+  .sect{font-size:12px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;margin:18px 4px 8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 15px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .card.wide{grid-column:1 / -1}
+  .k{font-size:12.5px;color:var(--mut);margin-bottom:6px}
+  .v{font-size:25px;font-weight:750;letter-spacing:-.01em}
+  .v small{font-size:14px;font-weight:600;color:var(--mut)}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .row3 .v{font-size:18px}
+  .neg{color:var(--red)} .pos{color:var(--green)}
+  .pend{opacity:.55}
+  .pend .v{font-size:15px;color:var(--mut);font-weight:600}
+  .foot{margin-top:18px;font-size:11px;color:var(--mut);text-align:center;line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div id="light" class="light r"></div>
+    <div>
+      <div class="ttl">Кокпит · Карьер</div>
+      <div id="status" class="status">—</div>
+    </div>
+    <div class="upd">обновлено<br><span id="upd">—</span></div>
+  </div>
+
+  <div class="sect">Выручка (по отгрузкам)</div>
+  <div class="row3">
+    <div class="card"><div class="k">Сегодня</div><div class="v" id="rev_today">—</div></div>
+    <div class="card"><div class="k">7 дней</div><div class="v" id="rev_week">—</div></div>
+    <div class="card"><div class="k">Месяц</div><div class="v" id="rev_month">—</div></div>
+  </div>
+
+  <div class="sect">Отгрузка · Деньги · Долги</div>
+  <div class="grid">
+    <div class="card"><div class="k">Отгрузка за месяц</div><div class="v" id="tons_month">—</div></div>
+    <div class="card"><div class="k">Поступления за месяц</div><div class="v" id="pay_month">—</div></div>
+    <div class="card wide"><div class="k">Долги клиентов (исх. остаток)</div><div class="v" id="debt_total">—</div></div>
+  </div>
+
+  <div class="sect">Экономика (финмодель)</div>
+  <div class="grid">
+    <div class="card"><div class="k">Себестоимость, ₽/м³</div><div class="v" id="cost_m3">—</div></div>
+    <div class="card"><div class="k">Безубыточность</div><div class="v" id="breakeven">—</div></div>
+    <div class="card"><div class="k">Постоянные / мес</div><div class="v" id="fixed_month">—</div></div>
+    <div class="card"><div class="k">Маржа, ₽/м³</div><div class="v" id="margin_m3">—</div></div>
+  </div>
+
+  <div class="sect">От производства (ждёт Виталика)</div>
+  <div class="grid">
+    <div class="card pend"><div class="k">Произведено за смену</div><div class="v">— нет данных</div></div>
+    <div class="card pend"><div class="k">Запасы готовой продукции</div><div class="v">— нет данных</div></div>
+  </div>
+
+  <div class="foot">данные: Google Sheets «CRM/КОКПИТ» · экономика: финмодель econ_model<br>светофор — предварительная логика, уточняется</div>
+
+<script>
+// Текущий снимок (fallback). При наличии cockpit.json — перекрывается живыми данными.
+const FALLBACK = {
+  updated:"снимок", rev_today:0, rev_week:195778, rev_month:383564,
+  tons_month:1301.35, pay_month:167890, debt_total:-246996,
+  cost_m3:445, breakeven_m3:17547, fixed_month:1956798, margin_m3:111.52
+};
+const rub=n=>(Math.round(n)).toLocaleString('ru-RU')+" ₽";
+const num=(n,d=2)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
+function render(d){
+  document.getElementById('upd').textContent=d.updated||"—";
+  document.getElementById('rev_today').textContent=rub(d.rev_today);
+  document.getElementById('rev_week').textContent=rub(d.rev_week);
+  document.getElementById('rev_month').textContent=rub(d.rev_month);
+  document.getElementById('tons_month').innerHTML=num(d.tons_month)+' <small>т</small>';
+  document.getElementById('pay_month').textContent=rub(d.pay_month);
+  const dt=document.getElementById('debt_total'); dt.textContent=rub(d.debt_total);
+  dt.className='v '+(d.debt_total<0?'neg':'pos');
+  document.getElementById('cost_m3').textContent=rub(d.cost_m3);
+  document.getElementById('breakeven').innerHTML=Number(d.breakeven_m3).toLocaleString('ru-RU')+' <small>м³/мес</small>';
+  document.getElementById('fixed_month').textContent=rub(d.fixed_month);
+  document.getElementById('margin_m3').textContent=rub(d.margin_m3);
+  // Светофор (предварительно): выручка месяца vs ориентир безубыточности в деньгах (~6.3 млн)
+  const targetMoney=d.breakeven_m3*361; // ₽/мес по прайсу
+  const ratio=d.rev_month/targetMoney;
+  const L=document.getElementById('light'), S=document.getElementById('status');
+  if(ratio>=0.9){L.className='light g';S.textContent='В зоне нормы';}
+  else if(ratio>=0.4){L.className='light a';S.textContent='Ниже плана';}
+  else{L.className='light r';S.textContent='Глубоко ниже безубыточности';}
+}
+render(FALLBACK);
+fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{});
+setInterval(()=>fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{}),300000);
+</script>
+</body>
+</html>
