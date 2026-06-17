@@ -9,7 +9,7 @@
 <title>Кокпит · Карьер</title>
 <style>
   :root{
-    --bg1:#0b1020; --bg2:#121a33; --card:rgba(255,255,255,.06);
+    --bg1:#0b1020; --bg2:#121a33; --card:rgba(255,255,255,.07);
     --line:rgba(255,255,255,.12); --txt:#eaf0ff; --mut:#8da0c8;
     --green:#27c281; --amber:#f5b53d; --red:#ef5b6b; --accent:#5b8cff;
   }
@@ -21,42 +21,39 @@
     background:
       radial-gradient(1200px 800px at 70% -10%, #1c2a52 0%, transparent 60%),
       linear-gradient(160deg,var(--bg1),var(--bg2));
-    min-height:100%;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+    min-height:100%;padding:0 0 calc(8px + env(safe-area-inset-bottom));
     -webkit-font-smoothing:antialiased;
   }
-  .top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-  .light{width:54px;height:54px;border-radius:50%;flex:none;position:relative}
-  .light::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 28px 4px currentColor;opacity:.55}
+  .top{display:flex;align-items:center;gap:12px;padding:16px 16px 4px}
+  .light{width:46px;height:46px;border-radius:50%;flex:none;position:relative}
+  .light::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 24px 3px currentColor;opacity:.55}
   .light.g{background:var(--green);color:var(--green)}
   .light.a{background:var(--amber);color:var(--amber)}
   .light.r{background:var(--red);color:var(--red)}
-  .ttl{font-size:15px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
-  .status{font-size:24px;font-weight:700;margin-top:2px}
-  .upd{font-size:12px;color:var(--mut);margin-left:auto;text-align:right;line-height:1.4}
-  .sect{font-size:12px;color:var(--mut);letter-spacing:.08em;text-transform:uppercase;margin:18px 4px 8px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 15px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-  .card.wide{grid-column:1 / -1}
-  .k{font-size:12.5px;color:var(--mut);margin-bottom:6px}
-  .v{font-size:25px;font-weight:750;letter-spacing:-.01em}
-  .v small{font-size:14px;font-weight:600;color:var(--mut)}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-  .row3 .v{font-size:18px}
-  .neg{color:var(--red)} .pos{color:var(--green)}
-  .pend{opacity:.55}
-  .pend .v{font-size:15px;color:var(--mut);font-weight:600}
-  .sub{font-size:11.5px;color:var(--mut);margin-top:5px}
-  details.drill{padding:0;overflow:hidden}
-  details.drill summary{list-style:none;cursor:pointer;padding:14px 15px;display:flex;align-items:center;gap:6px}
-  details.drill summary::-webkit-details-marker{display:none}
-  details.drill summary .sv{font-weight:750;font-size:20px;margin-left:auto}
-  details.drill summary .chev{color:var(--mut);font-size:20px;transition:transform .2s;width:14px;text-align:center}
-  details.drill[open] summary .chev{transform:rotate(90deg)}
-  details.drill .body{padding:2px 15px 14px}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-  .mini .k{font-size:11.5px}
-  .mini .v{font-size:18px;font-weight:750}
-  .foot{margin-top:18px;font-size:11px;color:var(--mut);text-align:center;line-height:1.5}
+  .ttl{font-size:13px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+  .status{font-size:20px;font-weight:700;margin-top:1px}
+  .upd{font-size:11px;color:var(--mut);margin-left:auto;text-align:right;line-height:1.35}
+
+  .pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth}
+  .pages::-webkit-scrollbar{display:none}
+  .page{flex:0 0 100vw;min-width:100vw;scroll-snap-align:center;padding:8px 16px 4px}
+  .ptl{font-size:12px;color:var(--mut);letter-spacing:.10em;text-transform:uppercase;margin:6px 4px 12px}
+
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .full{grid-column:1 / -1}
+  .m{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px 15px 14px;
+     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .mv{font-size:clamp(27px,8.5vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1.02}
+  .mv small{font-size:.45em;font-weight:700;color:var(--mut);letter-spacing:0}
+  .ml{font-size:11px;color:var(--mut);margin-top:7px;letter-spacing:.03em}
+  .big .mv{font-size:clamp(34px,12vw,52px)}
+  .sm .mv{font-size:clamp(20px,6vw,28px);font-weight:750}
+  .neg{color:var(--red)} .pos{color:var(--green)} .accentv{color:var(--accent)}
+
+  .dots{display:flex;justify-content:center;gap:8px;padding:12px 0 6px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:.2s}
+  .dot.on{background:var(--accent);width:22px;border-radius:4px}
+  .foot{font-size:10.5px;color:var(--mut);text-align:center;line-height:1.5;padding:6px 16px 0}
 </style>
 </head>
 <body>
@@ -69,104 +66,91 @@
     <div class="upd">обновлено<br><span id="upd">—</span></div>
   </div>
 
-  <div class="sect">Выручка (по отгрузкам)</div>
-  <div class="row3">
-    <div class="card"><div class="k">Сегодня</div><div class="v" id="rev_today">—</div></div>
-    <div class="card"><div class="k">7 дней</div><div class="v" id="rev_week">—</div></div>
-    <div class="card"><div class="k">Месяц</div><div class="v" id="rev_month">—</div></div>
-  </div>
+  <div class="pages" id="pages">
 
-  <div class="sect">Деньги (поступления)</div>
-  <div class="grid">
-    <div class="card"><div class="k">Безнал · месяц</div><div class="v" id="pay_beznal_month">—</div><div class="sub" id="pay_beznal_today">сегодня —</div></div>
-    <div class="card"><div class="k">Всего поступило · месяц</div><div class="v" id="pay_month">—</div><div class="sub" id="pay_today">сегодня —</div></div>
-
-    <details class="card wide drill">
-      <summary>
-        <span class="k" style="margin:0">Нал без чека (2 база) · месяц</span>
-        <span class="sv" id="nal_nocheck_month">—</span>
-        <span class="chev">›</span>
-      </summary>
-      <div class="body">
-        <div class="row2">
-          <div class="mini"><div class="k">В кассе налом · мес</div><div class="v" id="kassa_nal_month">—</div><div class="sub" id="kassa_nal_today">сегодня —</div></div>
-          <div class="mini"><div class="k">Директору на карту · мес</div><div class="v" id="director_month">—</div><div class="sub" id="director_today">сегодня —</div></div>
-        </div>
+    <!-- ЭКРАН 1 · ДЕНЬГИ СЕГОДНЯ -->
+    <section class="page">
+      <div class="ptl">① Деньги · сегодня</div>
+      <div class="g2">
+        <div class="m big full"><div class="mv" id="rev_today">—</div><div class="ml">Выручка сегодня</div></div>
+        <div class="m"><div class="mv" id="pay_today">—</div><div class="ml">Поступило сегодня</div></div>
+        <div class="m"><div class="mv accentv" id="kassa_nal_today">—</div><div class="ml">Наличка в кассе</div></div>
+        <div class="m"><div class="mv" id="pay_beznal_today">—</div><div class="ml">Безнал сегодня</div></div>
+        <div class="m"><div class="mv accentv" id="director_today">—</div><div class="ml">Директору на карту</div></div>
+        <div class="m sm full"><div class="mv" id="rev_month">—</div><div class="ml">Выручка за месяц</div></div>
       </div>
-    </details>
+    </section>
 
-    <div class="card wide"><div class="k">Долги клиентов (исх. остаток)</div><div class="v" id="debt_total">—</div></div>
+    <!-- ЭКРАН 2 · РАБОТА СЕГОДНЯ -->
+    <section class="page">
+      <div class="ptl">② Работа · сегодня</div>
+      <div class="g2">
+        <div class="m big full"><div class="mv" id="tons_today">—</div><div class="ml">Отгрузка сегодня</div></div>
+        <div class="m"><div class="mv" id="zavoz_today">—</div><div class="ml">Завоз, м³</div></div>
+        <div class="m"><div class="mv" id="dobycha_today">—</div><div class="ml">Добыча, м³</div></div>
+        <div class="m"><div class="mv" id="pererab_today">—</div><div class="ml">Переработка, м³</div></div>
+        <div class="m"><div class="mv sm" id="tons_month">—</div><div class="ml">Отгрузка за месяц</div></div>
+        <div class="m sm full"><div class="mv" id="debt_total">—</div><div class="ml">Долги клиентов (исх. остаток)</div></div>
+        <div class="m sm full"><div class="mv" id="breakeven">—</div><div class="ml">Точка безубыточности · черновая</div></div>
+      </div>
+    </section>
+
   </div>
 
-  <div class="sect">Отгрузка</div>
-  <div class="grid">
-    <div class="card"><div class="k">За месяц</div><div class="v" id="tons_month">—</div></div>
-    <div class="card"><div class="k">Сегодня</div><div class="v" id="tons_today">—</div></div>
-  </div>
-
-  <div class="sect">Экономика (финмодель)</div>
-  <div class="grid">
-    <div class="card"><div class="k">Себестоимость, ₽/м³</div><div class="v" id="cost_m3">—</div></div>
-    <div class="card"><div class="k">Безубыточность</div><div class="v" id="breakeven">—</div></div>
-    <div class="card"><div class="k">Постоянные / мес</div><div class="v" id="fixed_month">—</div></div>
-    <div class="card"><div class="k">Маржа, ₽/м³</div><div class="v" id="margin_m3">—</div></div>
-  </div>
-
-  <div class="sect">От производства (ждёт Виталика)</div>
-  <div class="grid">
-    <div class="card pend"><div class="k">Произведено за смену</div><div class="v">— нет данных</div></div>
-    <div class="card pend"><div class="k">Запасы готовой продукции</div><div class="v">— нет данных</div></div>
-  </div>
-
-  <div class="foot">данные: Google Sheets «CRM/КОКПИТ» · экономика: финмодель econ_model<br>светофор — предварительная логика, уточняется</div>
+  <div class="dots"><div class="dot on" data-i="0"></div><div class="dot" data-i="1"></div></div>
+  <div class="foot">данные: Google Sheets · завоз/добыча — ручной лист «Производство» · свайп ← → между экранами</div>
 
 <script>
-// Текущий снимок (fallback). При наличии cockpit.json — перекрывается живыми данными.
 const FALLBACK = {
-  updated:"снимок", rev_today:0, rev_week:195778, rev_month:383564,
-  tons_month:1301.35, tons_today:0, pay_month:167890, pay_today:0, debt_total:-246996,
-  pay_beznal_month:0, pay_beznal_today:0, nal_nocheck_month:0,
-  kassa_nal_month:0, kassa_nal_today:0, director_month:0, director_today:0,
-  cost_m3:445, breakeven_m3:17547, fixed_month:1956798, margin_m3:111.52
+  updated:"снимок", rev_today:0, rev_month:553274, pay_today:0, pay_month:248890,
+  tons_today:0, tons_month:1983.3, debt_total:-294371,
+  pay_beznal_today:0, kassa_nal_today:0, director_today:0,
+  zavoz_today:0, dobycha_today:0, pererab_today:0, breakeven_m3:17547
 };
-const g=(d,k)=>d[k]==null?0:d[k];
-const rub=n=>(Math.round(Number(n))).toLocaleString('ru-RU')+" ₽";
-const num=(n,d=2)=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
-const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+const g=(d,k)=>d[k]==null?0:Number(d[k]);
+const rub=n=>Math.round(Number(n)).toLocaleString('ru-RU')+" ₽";
+const tons=n=>Number(n).toLocaleString('ru-RU',{minimumFractionDigits:1,maximumFractionDigits:1})+' <small>т</small>';
+const m3=n=>Number(n).toLocaleString('ru-RU',{maximumFractionDigits:0})+' <small>м³</small>';
+const set=(id,html)=>{const e=document.getElementById(id);if(e)e.innerHTML=html;};
+
 function render(d){
   document.getElementById('upd').textContent=d.updated||"—";
-  document.getElementById('rev_today').textContent=rub(g(d,'rev_today'));
-  document.getElementById('rev_week').textContent=rub(g(d,'rev_week'));
-  document.getElementById('rev_month').textContent=rub(g(d,'rev_month'));
-  document.getElementById('tons_month').innerHTML=num(g(d,'tons_month'))+' <small>т</small>';
-  set('tons_today',num(g(d,'tons_today'))+' т');
-  document.getElementById('pay_month').textContent=rub(g(d,'pay_month'));
-  set('pay_today','сегодня '+rub(g(d,'pay_today')));
-  // деньги — разбивка
-  set('pay_beznal_month',rub(g(d,'pay_beznal_month')));
-  set('pay_beznal_today','сегодня '+rub(g(d,'pay_beznal_today')));
-  set('nal_nocheck_month',rub(g(d,'nal_nocheck_month')));
-  set('kassa_nal_month',rub(g(d,'kassa_nal_month')));
-  set('kassa_nal_today','сегодня '+rub(g(d,'kassa_nal_today')));
-  set('director_month',rub(g(d,'director_month')));
-  set('director_today','сегодня '+rub(g(d,'director_today')));
-  const dt=document.getElementById('debt_total'); dt.textContent=rub(g(d,'debt_total'));
-  dt.className='v '+(g(d,'debt_total')<0?'neg':'pos');
-  document.getElementById('cost_m3').textContent=rub(d.cost_m3);
-  document.getElementById('breakeven').innerHTML=Number(d.breakeven_m3).toLocaleString('ru-RU')+' <small>м³/мес</small>';
-  document.getElementById('fixed_month').textContent=rub(d.fixed_month);
-  document.getElementById('margin_m3').textContent=rub(d.margin_m3);
-  // Светофор (предварительно): выручка месяца vs ориентир безубыточности в деньгах (~6.3 млн)
-  const targetMoney=d.breakeven_m3*361; // ₽/мес по прайсу
-  const ratio=d.rev_month/targetMoney;
+  // экран 1 — деньги
+  set('rev_today',rub(g(d,'rev_today')));
+  set('pay_today',rub(g(d,'pay_today')));
+  set('kassa_nal_today',rub(g(d,'kassa_nal_today')));
+  set('pay_beznal_today',rub(g(d,'pay_beznal_today')));
+  set('director_today',rub(g(d,'director_today')));
+  set('rev_month',rub(g(d,'rev_month')));
+  // экран 2 — работа
+  set('tons_today',tons(g(d,'tons_today')));
+  set('zavoz_today',m3(g(d,'zavoz_today')));
+  set('dobycha_today',m3(g(d,'dobycha_today')));
+  set('pererab_today',m3(g(d,'pererab_today')));
+  set('tons_month',tons(g(d,'tons_month')));
+  const dt=document.getElementById('debt_total');
+  dt.innerHTML=rub(g(d,'debt_total')); dt.className='mv sm '+(g(d,'debt_total')<0?'neg':'pos');
+  set('breakeven',Number(g(d,'breakeven_m3')).toLocaleString('ru-RU')+' <small>м³/мес</small>');
+  // светофор: выручка месяца vs ориентир (~6.3 млн)
+  const target=g(d,'breakeven_m3')*361, ratio=target?g(d,'rev_month')/target:0;
   const L=document.getElementById('light'), S=document.getElementById('status');
   if(ratio>=0.9){L.className='light g';S.textContent='В зоне нормы';}
   else if(ratio>=0.4){L.className='light a';S.textContent='Ниже плана';}
-  else{L.className='light r';S.textContent='Глубоко ниже безубыточности';}
+  else{L.className='light r';S.textContent='Ниже безубыточности';}
 }
 render(FALLBACK);
-fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{});
-setInterval(()=>fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{}),300000);
+const load=()=>fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{});
+load(); setInterval(load,300000);
+
+// точки-индикатор страниц
+const pages=document.getElementById('pages');
+pages.addEventListener('scroll',()=>{
+  const i=Math.round(pages.scrollLeft/pages.clientWidth);
+  document.querySelectorAll('.dot').forEach((x,j)=>x.classList.toggle('on',j===i));
+});
+document.querySelectorAll('.dot').forEach(dot=>dot.addEventListener('click',()=>{
+  pages.scrollTo({left:pages.clientWidth*(+dot.dataset.i),behavior:'smooth'});
+}));
 </script>
 </body>
 </html>
