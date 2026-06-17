@@ -1,13 +1,1 @@
-{
-  "updated": "10.06.2026 (снимок)",
-  "rev_today": 0,
-  "rev_week": 195778,
-  "rev_month": 383564,
-  "tons_month": 1301.35,
-  "pay_month": 167890,
-  "debt_total": -246996,
-  "cost_m3": 445,
-  "breakeven_m3": 17547,
-  "fixed_month": 1956798,
-  "margin_m3": 111.52
-}
+{"updated": "17.06.2026 08:06 МСК", "rev_today": 0, "rev_week": 169710.7, "rev_month": 553274.55, "tons_today": 0, "tons_week": 681.95, "tons_month": 1983.3000000000002, "pay_today": 0, "pay_month": 248890.2, "debt_total": -294371.7100000006, "cost_m3": 445, "breakeven_m3": 17547, "fixed_month": 1956798, "margin_m3": 111.52}
