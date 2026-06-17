@@ -64,9 +64,10 @@ function row(label, value, big){
 }
 
 row("Выручка, месяц", rub(d.rev_month), true);
+row("Безнал, месяц", rub(d.pay_beznal_month || 0));
+row("Нал без чека, мес", rub(d.nal_nocheck_month || 0));
 row("Отгрузка, месяц", num(d.tons_month) + " т");
 row("Долги клиентов", rub(d.debt_total));
-row("Безубыточность", num(d.breakeven_m3) + " м³/мес");
 
 w.addSpacer(4);
 const upd = w.addText("обновлено " + (d.updated || "—"));
