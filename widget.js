@@ -1,7 +1,7 @@
 // Кокпит Карьер — виджет для Scriptable (iOS)
-// Поддерживает ДВА места:
-//   • экран БЛОКИРОВКИ (lock screen, accessoryRectangular) — компактные строки
-//   • домашний экран (medium) — полупрозрачный «стеклянный» блок
+//   • экран БЛОКИРОВКИ (accessoryRectangular) — компактно
+//   • домашний экран (medium) — стеклянный блок
+// Показывает цифры ЗА МЕСЯЦ (всегда есть) + строку «сегодня».
 const URL = "https://salesblokkrd-web.github.io/karer-cockpit/cockpit.json";
 
 function spaces(n){
@@ -10,36 +10,33 @@ function spaces(n){
   return (n < 0 ? "−" : "") + out;
 }
 function rub(n){ return spaces(n) + " ₽"; }
-// короткий формат для тесного экрана блокировки: 1 250 000 → 1,25 млн
 function rubShort(n){
   n = Number(n) || 0;
   if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(2).replace(".", ",") + " млн";
   if (Math.abs(n) >= 1e4) return Math.round(n/1e3) + " тыс";
   return spaces(n) + " ₽";
 }
-function num(n){ return Number(n).toLocaleString("ru-RU", {maximumFractionDigits:1}); }
+function num(n){ return Number(n||0).toLocaleString("ru-RU", {maximumFractionDigits:1}); }
 
 let d;
 try { d = await new Request(URL).loadJSON(); } catch (e) { d = null; }
 
-const fam = config.widgetFamily;            // 'accessoryRectangular' | 'medium' | ...
-const isLock = fam && String(fam).startsWith("accessory");
-
+const isLock = config.widgetFamily && String(config.widgetFamily).startsWith("accessory");
 if (isLock) { renderLock(); } else { renderHome(); }
 
-// ── ЭКРАН БЛОКИРОВКИ (компактно, iOS тонирует сам) ──
+// ── ЭКРАН БЛОКИРОВКИ ──
 function renderLock(){
   const w = new ListWidget();
   w.addAccessoryWidgetBackground = true;
   w.setPadding(2, 4, 2, 4);
   if (!d){ w.addText("Кокпит · нет связи").font = Font.mediumSystemFont(11); finish(w); return; }
-  const a = w.addText("Выр " + rubShort(d.rev_today)); a.font = Font.boldSystemFont(14);
-  const b = w.addText("Касса " + rubShort(d.kassa_nal_today)); b.font = Font.systemFont(11);
-  const c = w.addText("Отгр " + num(d.tons_today) + " т"); c.font = Font.systemFont(11);
+  const a = w.addText("Выр.мес " + rubShort(d.rev_month)); a.font = Font.boldSystemFont(14);
+  const b = w.addText("Отгр " + num(d.tons_month) + " т"); b.font = Font.systemFont(11);
+  const c = w.addText("Долг " + rubShort(d.debt_total)); c.font = Font.systemFont(11);
   finish(w);
 }
 
-// ── ДОМАШНИЙ ЭКРАН (стеклянный блок) ──
+// ── ДОМАШНИЙ ЭКРАН ──
 function renderHome(){
   const w = new ListWidget();
   const grad = new LinearGradient();
@@ -47,7 +44,6 @@ function renderHome(){
   grad.locations = [0, 1];
   w.backgroundGradient = grad;
   w.setPadding(12, 14, 12, 12);
-
   if (!d){ const t = w.addText("Кокпит · нет связи"); t.textColor = Color.white(); t.font = Font.mediumSystemFont(13); finish(w); return; }
 
   const target = (d.breakeven_m3 || 17547) * 361;
@@ -75,12 +71,14 @@ function renderHome(){
     v.font = big ? Font.boldSystemFont(16) : Font.semiboldSystemFont(13);
     w.addSpacer(big?5:3);
   }
-  row("Выручка сегодня", rub(d.rev_today || 0), true);
-  row("Наличка касса", rub(d.kassa_nal_today || 0));
-  row("Безнал сегодня", rub(d.pay_beznal_today || 0));
-  row("Отгрузка сегодня", num(d.tons_today || 0) + " т");
+  row("Выручка, месяц", rub(d.rev_month), true);
+  row("Поступило, месяц", rub(d.pay_month));
+  row("Отгрузка, месяц", num(d.tons_month) + " т");
+  row("Долги клиентов", rub(d.debt_total));
 
   w.addSpacer(4);
+  const today = w.addText("сегодня: выр " + spaces(d.rev_today||0) + " · отгр " + num(d.tons_today) + " т");
+  today.textColor = mut; today.font = Font.systemFont(9);
   const upd = w.addText("обновлено " + (d.updated || "—"));
   upd.textColor = mut; upd.font = Font.systemFont(9);
   finish(w);
