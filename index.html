@@ -73,11 +73,11 @@
       <div class="ptl">① Деньги · сегодня</div>
       <div class="g2">
         <div class="m big full"><div class="mv" id="rev_today">—</div><div class="ml">Выручка сегодня</div></div>
-        <div class="m"><div class="mv" id="pay_today">—</div><div class="ml">Поступило сегодня</div></div>
-        <div class="m"><div class="mv accentv" id="kassa_nal_today">—</div><div class="ml">Наличка в кассе</div></div>
+        <div class="m"><div class="mv" id="pay_nal_today">—</div><div class="ml">Наличные (клиенты) сегодня</div></div>
         <div class="m"><div class="mv" id="pay_beznal_today">—</div><div class="ml">Безнал сегодня</div></div>
         <div class="m"><div class="mv accentv" id="director_today">—</div><div class="ml">Директору на карту</div></div>
-        <div class="m sm full"><div class="mv" id="rev_month">—</div><div class="ml">Выручка за месяц</div></div>
+        <div class="m"><div class="mv accentv" id="kassa_nal_today">—</div><div class="ml">Касса (ручной ввод)</div></div>
+        <div class="m sm full"><div class="mv" id="pay_nal_month">—</div><div class="ml">Наличные за месяц</div></div>
       </div>
     </section>
 
@@ -102,7 +102,7 @@
 
 <script>
 const FALLBACK = {
-  updated:"снимок", rev_today:0, rev_month:553274, pay_today:0, pay_month:248890,
+  updated:"снимок", rev_today:0, rev_month:553274, pay_nal_today:0, pay_nal_month:130113,
   tons_today:0, tons_month:1983.3, debt_total:-294371,
   pay_beznal_today:0, kassa_nal_today:0, director_today:0,
   zavoz_today:0, dobycha_today:0, pererab_today:0, breakeven_m3:17547
@@ -117,10 +117,11 @@ function render(d){
   document.getElementById('upd').textContent=d.updated||"—";
   // экран 1 — деньги
   set('rev_today',rub(g(d,'rev_today')));
-  set('pay_today',rub(g(d,'pay_today')));
-  set('kassa_nal_today',rub(g(d,'kassa_nal_today')));
+  set('pay_nal_today',rub(g(d,'pay_nal_today')));
   set('pay_beznal_today',rub(g(d,'pay_beznal_today')));
   set('director_today',rub(g(d,'director_today')));
+  set('kassa_nal_today',rub(g(d,'kassa_nal_today')));
+  set('pay_nal_month',rub(g(d,'pay_nal_month')));
   set('rev_month',rub(g(d,'rev_month')));
   // экран 2 — работа
   set('tons_today',tons(g(d,'tons_today')));
