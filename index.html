@@ -112,6 +112,7 @@
         <div class="m"><div class="mv sm" id="rev_week">—</div><div class="ml">Выручка за 7 дней</div></div>
         <div class="m"><div class="mv sm" id="tons_week">—</div><div class="ml">Отгрузка за 7 дней</div></div>
         <div class="m sm full"><div class="mv" id="debt_total">—</div><div class="ml">Долги клиентов (исх. остаток)</div></div>
+        <div class="m sm full"><div class="mv" id="forecast">—</div><div class="ml" id="forecast_lbl">Прогноз выручки на месяц</div></div>
       </div>
     </section>
 
@@ -137,7 +138,7 @@
   <div class="foot">данные: Google Sheets, обновление 7×/день · свайп ← → или жми вкладки · <span id="ver"></span></div>
 
 <script>
-const APP_VERSION = "v3 · 22.06";
+const APP_VERSION = "v4 · 22.06";
 document.getElementById('ver').textContent = APP_VERSION;
 
 const FALLBACK = {
@@ -188,12 +189,22 @@ function render(d){
   set('cost_m3',Number(g(d,'cost_m3')).toLocaleString('ru-RU')+' <small>₽/м³</small>');
   set('fixed_month',rub(g(d,'fixed_month')));
 
-  // ── светофор: выручка месяца vs ориентир (~6.3 млн) ──
-  const target=g(d,'breakeven_m3')*361, ratio=target?g(d,'rev_month')/target:0;
+  // ── светофор: ПРОГНОЗ выручки на конец месяца vs безубыточность ──
+  // прогноз = накопленная выручка / прошедшие дни × дней в месяце (линейная экстраполяция темпа)
+  const now=new Date();
+  const dayNow=now.getDate();
+  const daysInMonth=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const revM=g(d,'rev_month');
+  const forecast = dayNow>0 ? revM/dayNow*daysInMonth : revM;
+  const target=g(d,'breakeven_m3')*361;          // ориентир выручки безубыточности (~6.3 млн)
+  const ratio=target?forecast/target:0;
+  set('forecast', rub(forecast));
+  document.getElementById('forecast_lbl').textContent =
+    'Прогноз на месяц · порог безубыточности '+Math.round(target/1e6*10)/10+' млн ₽';
   const L=document.getElementById('light'), S=document.getElementById('status');
-  if(ratio>=0.9){L.className='light g';S.textContent='В зоне нормы';}
-  else if(ratio>=0.4){L.className='light a';S.textContent='Ниже плана';}
-  else{L.className='light r';S.textContent='Ниже безубыточности';}
+  if(ratio>=0.9){L.className='light g';S.textContent='Выходим на безубыточность';}
+  else if(ratio>=0.55){L.className='light a';S.textContent='Ниже безубыточности';}
+  else{L.className='light r';S.textContent='Сильно ниже безубыточности';}
 }
 render(FALLBACK);
 const load=()=>fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{});
