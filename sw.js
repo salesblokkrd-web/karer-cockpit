@@ -1,7 +1,7 @@
 // Кокпит · service worker
 // Стратегия: network-first для страницы и данных → всегда свежая версия.
 // Кэш используется только как запасной вариант при потере сети.
-const CACHE = 'kokpit-v3';
+const CACHE = 'kokpit-v4';
 
 self.addEventListener('install', e => self.skipWaiting());
 
