@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Кокпит">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>Кокпит · Карьер</title>
 <style>
   :root{
@@ -24,20 +27,26 @@
     min-height:100%;padding:0 0 calc(8px + env(safe-area-inset-bottom));
     -webkit-font-smoothing:antialiased;
   }
-  .top{display:flex;align-items:center;gap:12px;padding:16px 16px 4px}
-  .light{width:46px;height:46px;border-radius:50%;flex:none;position:relative}
+  .top{display:flex;align-items:center;gap:12px;padding:14px 16px 4px}
+  .light{width:42px;height:42px;border-radius:50%;flex:none;position:relative}
   .light::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 24px 3px currentColor;opacity:.55}
   .light.g{background:var(--green);color:var(--green)}
   .light.a{background:var(--amber);color:var(--amber)}
   .light.r{background:var(--red);color:var(--red)}
-  .ttl{font-size:13px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
-  .status{font-size:20px;font-weight:700;margin-top:1px}
+  .ttl{font-size:12px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+  .status{font-size:19px;font-weight:700;margin-top:1px}
   .upd{font-size:11px;color:var(--mut);margin-left:auto;text-align:right;line-height:1.35}
+
+  /* ── ВКЛАДКИ (видимые, тап + свайп) ── */
+  .tabs{display:flex;gap:7px;padding:10px 16px 6px;position:sticky;top:0;z-index:5}
+  .tab{flex:1;text-align:center;padding:9px 4px;border-radius:13px;font-size:14px;font-weight:700;
+       color:var(--mut);background:var(--card);border:1px solid var(--line);transition:.18s;cursor:pointer}
+  .tab.on{color:#fff;background:linear-gradient(160deg,#2c46a0,#3a5fd0);border-color:transparent;
+          box-shadow:0 4px 16px rgba(58,95,208,.35)}
 
   .pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth}
   .pages::-webkit-scrollbar{display:none}
   .page{flex:0 0 100vw;min-width:100vw;scroll-snap-align:center;padding:8px 16px 4px}
-  .ptl{font-size:12px;color:var(--mut);letter-spacing:.10em;text-transform:uppercase;margin:6px 4px 12px}
 
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
   .full{grid-column:1 / -1}
@@ -50,10 +59,13 @@
   .sm .mv{font-size:clamp(20px,6vw,28px);font-weight:750}
   .neg{color:var(--red)} .pos{color:var(--green)} .accentv{color:var(--accent)}
 
-  .dots{display:flex;justify-content:center;gap:8px;padding:12px 0 6px}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:.2s}
-  .dot.on{background:var(--accent);width:22px;border-radius:4px}
-  .foot{font-size:10.5px;color:var(--mut);text-align:center;line-height:1.5;padding:6px 16px 0}
+  .empty{background:var(--card);border:1px dashed var(--line);border-radius:18px;padding:34px 18px;text-align:center}
+  .empty .ico{font-size:34px;opacity:.6}
+  .empty .t1{font-size:17px;font-weight:700;margin-top:10px}
+  .empty .t2{font-size:12.5px;color:var(--mut);margin-top:6px;line-height:1.5}
+  .hidden{display:none}
+
+  .foot{font-size:10.5px;color:var(--mut);text-align:center;line-height:1.5;padding:12px 16px 0}
 </style>
 </head>
 <body>
@@ -66,46 +78,75 @@
     <div class="upd">обновлено<br><span id="upd">—</span></div>
   </div>
 
+  <div class="tabs">
+    <div class="tab" data-i="0">Сегодня</div>
+    <div class="tab on" data-i="1">Месяц</div>
+    <div class="tab" data-i="2">Произв.</div>
+  </div>
+
   <div class="pages" id="pages">
 
-    <!-- ЭКРАН 1 · ДЕНЬГИ СЕГОДНЯ -->
+    <!-- ВКЛАДКА 0 · СЕГОДНЯ -->
     <section class="page">
-      <div class="ptl">① Деньги · сегодня</div>
-      <div class="g2">
+      <div id="today_empty" class="empty hidden">
+        <div class="ico">🌙</div>
+        <div class="t1">Сегодня движения пока нет</div>
+        <div class="t2">Отгрузки и платежи появятся здесь<br>в течение дня. Итоги — на вкладке «Месяц».</div>
+      </div>
+      <div id="today_grid" class="g2">
         <div class="m big full"><div class="mv" id="rev_today">—</div><div class="ml">Выручка сегодня</div></div>
-        <div class="m"><div class="mv" id="pay_nal_today">—</div><div class="ml">Наличные (клиенты) сегодня</div></div>
-        <div class="m"><div class="mv" id="pay_beznal_today">—</div><div class="ml">Безнал сегодня</div></div>
-        <div class="m"><div class="mv accentv" id="director_today">—</div><div class="ml">Директору на карту</div></div>
+        <div class="m"><div class="mv" id="tons_today">—</div><div class="ml">Отгрузка сегодня</div></div>
+        <div class="m"><div class="mv" id="pay_nal_today">—</div><div class="ml">Наличные (клиенты)</div></div>
+        <div class="m"><div class="mv" id="pay_beznal_today">—</div><div class="ml">Безнал</div></div>
         <div class="m"><div class="mv accentv" id="kassa_nal_today">—</div><div class="ml">Касса (ручной ввод)</div></div>
-        <div class="m sm full"><div class="mv" id="pay_nal_month">—</div><div class="ml">Наличные за месяц</div></div>
+        <div class="m"><div class="mv accentv" id="director_today">—</div><div class="ml">Директору на карту</div></div>
       </div>
     </section>
 
-    <!-- ЭКРАН 2 · РАБОТА СЕГОДНЯ -->
+    <!-- ВКЛАДКА 1 · МЕСЯЦ (открывается первой) -->
     <section class="page">
-      <div class="ptl">② Работа · сегодня</div>
       <div class="g2">
-        <div class="m big full"><div class="mv" id="tons_today">—</div><div class="ml">Отгрузка сегодня</div></div>
-        <div class="m"><div class="mv" id="zavoz_today">—</div><div class="ml">Завоз, м³</div></div>
-        <div class="m"><div class="mv" id="dobycha_today">—</div><div class="ml">Добыча, м³</div></div>
-        <div class="m"><div class="mv" id="pererab_today">—</div><div class="ml">Переработка, м³</div></div>
-        <div class="m"><div class="mv sm" id="tons_month">—</div><div class="ml">Отгрузка за месяц</div></div>
+        <div class="m big full"><div class="mv" id="rev_month">—</div><div class="ml">Выручка за месяц</div></div>
+        <div class="m"><div class="mv" id="pay_month">—</div><div class="ml">Поступило за месяц</div></div>
+        <div class="m"><div class="mv" id="tons_month">—</div><div class="ml">Отгрузка за месяц</div></div>
+        <div class="m"><div class="mv sm" id="rev_week">—</div><div class="ml">Выручка за 7 дней</div></div>
+        <div class="m"><div class="mv sm" id="tons_week">—</div><div class="ml">Отгрузка за 7 дней</div></div>
         <div class="m sm full"><div class="mv" id="debt_total">—</div><div class="ml">Долги клиентов (исх. остаток)</div></div>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 2 · ПРОИЗВОДСТВО -->
+    <section class="page">
+      <div class="g2">
+        <div class="m"><div class="mv" id="zavoz_today">—</div><div class="ml">Завоз сегодня, м³</div></div>
+        <div class="m"><div class="mv" id="dobycha_today">—</div><div class="ml">Добыча сегодня, м³</div></div>
+        <div class="m"><div class="mv" id="pererab_today">—</div><div class="ml">Переработка сегодня, м³</div></div>
+        <div class="m"><div class="mv sm" id="margin_m3">—</div><div class="ml">Маржа, ₽/м³ (прайс)</div></div>
         <div class="m sm full"><div class="mv" id="breakeven">—</div><div class="ml">Точка безубыточности · черновая</div></div>
+        <div class="m sm"><div class="mv" id="cost_m3">—</div><div class="ml">Себестоимость, ₽/м³</div></div>
+        <div class="m sm"><div class="mv" id="fixed_month">—</div><div class="ml">Постоянные, ₽/мес</div></div>
+      </div>
+      <div class="foot" style="text-align:left;padding-left:4px">
+        ⚠️ Производство (завоз/добыча/переработка) вносится вручную в лист «Производство».
+        Безубыточность — черновая модель (заглушки по ФОТ/электричеству), уточняется.
       </div>
     </section>
 
   </div>
 
-  <div class="dots"><div class="dot on" data-i="0"></div><div class="dot" data-i="1"></div></div>
-  <div class="foot">данные: Google Sheets · завоз/добыча — ручной лист «Производство» · свайп ← → между экранами</div>
+  <div class="foot">данные: Google Sheets, обновление 7×/день · свайп ← → или жми вкладки · <span id="ver"></span></div>
 
 <script>
+const APP_VERSION = "v3 · 22.06";
+document.getElementById('ver').textContent = APP_VERSION;
+
 const FALLBACK = {
-  updated:"снимок", rev_today:0, rev_month:553274, pay_nal_today:0, pay_nal_month:130113,
-  tons_today:0, tons_month:1983.3, debt_total:-294371,
-  pay_beznal_today:0, kassa_nal_today:0, director_today:0,
-  zavoz_today:0, dobycha_today:0, pererab_today:0, breakeven_m3:17547
+  updated:"снимок", rev_today:0, rev_week:0, rev_month:744787, pay_month:370890,
+  pay_nal_today:0, pay_nal_month:130113, pay_beznal_today:0,
+  tons_today:0, tons_week:0, tons_month:2672.7, debt_total:-440621,
+  kassa_nal_today:0, director_today:0,
+  zavoz_today:0, dobycha_today:0, pererab_today:0,
+  breakeven_m3:17547, cost_m3:445, fixed_month:1956798, margin_m3:111.52
 };
 const g=(d,k)=>d[k]==null?0:Number(d[k]);
 const rub=n=>Math.round(Number(n)).toLocaleString('ru-RU')+" ₽";
@@ -115,24 +156,39 @@ const set=(id,html)=>{const e=document.getElementById(id);if(e)e.innerHTML=html;
 
 function render(d){
   document.getElementById('upd').textContent=d.updated||"—";
-  // экран 1 — деньги
+
+  // ── вкладка СЕГОДНЯ ──
+  const todaySum = g(d,'rev_today')+g(d,'tons_today')+g(d,'pay_nal_today')+
+                   g(d,'pay_beznal_today')+g(d,'kassa_nal_today')+g(d,'director_today');
+  const empty=document.getElementById('today_empty'), grid=document.getElementById('today_grid');
+  if(todaySum===0){ empty.classList.remove('hidden'); grid.classList.add('hidden'); }
+  else{ empty.classList.add('hidden'); grid.classList.remove('hidden'); }
   set('rev_today',rub(g(d,'rev_today')));
+  set('tons_today',tons(g(d,'tons_today')));
   set('pay_nal_today',rub(g(d,'pay_nal_today')));
   set('pay_beznal_today',rub(g(d,'pay_beznal_today')));
-  set('director_today',rub(g(d,'director_today')));
   set('kassa_nal_today',rub(g(d,'kassa_nal_today')));
-  set('pay_nal_month',rub(g(d,'pay_nal_month')));
+  set('director_today',rub(g(d,'director_today')));
+
+  // ── вкладка МЕСЯЦ ──
   set('rev_month',rub(g(d,'rev_month')));
-  // экран 2 — работа
-  set('tons_today',tons(g(d,'tons_today')));
+  set('pay_month',rub(g(d,'pay_month')));
+  set('tons_month',tons(g(d,'tons_month')));
+  set('rev_week',rub(g(d,'rev_week')));
+  set('tons_week',tons(g(d,'tons_week')));
+  const dt=document.getElementById('debt_total');
+  dt.innerHTML=rub(g(d,'debt_total')); dt.className='mv '+(g(d,'debt_total')<0?'neg':'pos');
+
+  // ── вкладка ПРОИЗВОДСТВО ──
   set('zavoz_today',m3(g(d,'zavoz_today')));
   set('dobycha_today',m3(g(d,'dobycha_today')));
   set('pererab_today',m3(g(d,'pererab_today')));
-  set('tons_month',tons(g(d,'tons_month')));
-  const dt=document.getElementById('debt_total');
-  dt.innerHTML=rub(g(d,'debt_total')); dt.className='mv sm '+(g(d,'debt_total')<0?'neg':'pos');
+  set('margin_m3',Number(g(d,'margin_m3')).toLocaleString('ru-RU',{maximumFractionDigits:0})+' <small>₽/м³</small>');
   set('breakeven',Number(g(d,'breakeven_m3')).toLocaleString('ru-RU')+' <small>м³/мес</small>');
-  // светофор: выручка месяца vs ориентир (~6.3 млн)
+  set('cost_m3',Number(g(d,'cost_m3')).toLocaleString('ru-RU')+' <small>₽/м³</small>');
+  set('fixed_month',rub(g(d,'fixed_month')));
+
+  // ── светофор: выручка месяца vs ориентир (~6.3 млн) ──
   const target=g(d,'breakeven_m3')*361, ratio=target?g(d,'rev_month')/target:0;
   const L=document.getElementById('light'), S=document.getElementById('status');
   if(ratio>=0.9){L.className='light g';S.textContent='В зоне нормы';}
@@ -143,15 +199,23 @@ render(FALLBACK);
 const load=()=>fetch('cockpit.json?t='+Date.now()).then(r=>r.ok?r.json():null).then(d=>{if(d)render(d);}).catch(()=>{});
 load(); setInterval(load,300000);
 
-// точки-индикатор страниц
+// ── вкладки ↔ свайп ──
 const pages=document.getElementById('pages');
-pages.addEventListener('scroll',()=>{
-  const i=Math.round(pages.scrollLeft/pages.clientWidth);
-  document.querySelectorAll('.dot').forEach((x,j)=>x.classList.toggle('on',j===i));
-});
-document.querySelectorAll('.dot').forEach(dot=>dot.addEventListener('click',()=>{
-  pages.scrollTo({left:pages.clientWidth*(+dot.dataset.i),behavior:'smooth'});
+const tabsEls=[...document.querySelectorAll('.tab')];
+function activate(i){ tabsEls.forEach((t,j)=>t.classList.toggle('on',j===i)); }
+tabsEls.forEach(t=>t.addEventListener('click',()=>{
+  const i=+t.dataset.i; pages.scrollTo({left:pages.clientWidth*i,behavior:'smooth'}); activate(i);
 }));
+let st;
+pages.addEventListener('scroll',()=>{
+  clearTimeout(st);
+  st=setTimeout(()=>activate(Math.round(pages.scrollLeft/pages.clientWidth)),60);
+});
+// открыться на вкладке «Месяц» (индекс 1)
+addEventListener('load',()=>{ pages.scrollLeft=pages.clientWidth*1; activate(1); });
+
+// ── service worker: всегда свежий HTML (лечит «вижу старую версию») ──
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 </script>
 </body>
 </html>
